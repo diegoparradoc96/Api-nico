@@ -1,0 +1,15 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Order {
+  id    String   @id @default(uuid())
+  date  DateTime
+  time  String
+  table Int
+  total Float
+}

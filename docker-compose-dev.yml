@@ -1,0 +1,42 @@
+services:
+  # 1. EL CONTENEDOR DE LA BASE DE DATOS (POSTGRES)
+  postgres-db:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: postgres:16-alpine # Usamos una version estable y ligera
+    container_name: postgres_backend_db
+    restart: always
+    # ESTOS SON LOS ENVIRONMENTS DE TU BASE DE DATOS:
+    environment:
+      POSTGRES_USER: diego
+      POSTGRES_PASSWORD: contador2
+      POSTGRES_DB: mi_base_datos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. EL CONTENEDOR DE TU APLICACION (NODE/EXPRESS)
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: express_api_server
+    restart: always
+    ports:
+      - "3000:3000" # Tu API de Express escucha en el 3000
+    # ESTOS SON LOS ENVIRONMENTS DE TU API:
+    environment:
+      - PORT=3000
+      # Prisma necesita saber donde esta la BD. 
+      # Usamos el nombre del servicio "postgres-db" como HOST, el usuario y contraseña que definimos arriba.
+      - DATABASE_URL=postgresql://diego:contador2@postgres-db:5432/mi_base_datos?schema=public
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres-db # Espera a que la base de datos levante antes de iniciar la API
+
+volumes:
+  postgres_data:

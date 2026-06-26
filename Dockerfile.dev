@@ -1,0 +1,16 @@
+FROM node:24.16
+
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+COPY package*.json pnpm-workspace.yaml* .npmrc ./
+
+RUN pnpm install
+
+COPY . .
+
+EXPOSE 3000
+
+# Ejecutar en modo desarrollo
+CMD ["pnpm", "run", "dev"]
