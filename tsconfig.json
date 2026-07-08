@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",                          /* Versión moderna de JS para Node.js */
+    "module": "CommonJS",                          /* Sistema de módulos estándar en Node */            /* 👈 AGREGA ESTO para que resuelva bien las rutas */
+    "lib": ["es2022"],                           /* Librerías de lenguaje a incluir */
+    "allowJs": true,                             /* Permite mezclar archivos .js si los tienes */
+    "outDir": "./dist",                          /* ¡CRUCIAL! Dónde guardará el código compilado */
+    "rootDir": "./src",                          /* Dónde está tu código fuente (ej: src/index.ts) */
+    "strict": true,                              /* Habilita la revisión estricta de tipos */
+    "noImplicitAny": false,                      /* Te da más flexibilidad si no tipaste todo */
+    "esModuleInterop": true,                     /* Compatibilidad con importaciones antiguas */
+    "skipLibCheck": true,                        /* Sáltate revisar errores dentro de node_modules */
+    "forceConsistentCasingInFileNames": true,     /* Evita problemas si compilas en Linux/Docker */
+    "noEmitOnError": true,
+    "removeComments": true,
+    "sourceMap": true                             /* Create source map files */
+  },
+  "include": ["src/**/*"],                       /* Dile que compile todo lo que esté en la carpeta src */
+  "exclude": ["node_modules", "dist", "prisma"]  /* Ignora por completo estas carpetas */
+}
