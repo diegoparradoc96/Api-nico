@@ -4,11 +4,13 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY package*.json pnpm-workspace.yaml* .npmrc ./
+COPY package*.json pnpm-workspace.yaml* prisma ./prisma ./
 
 RUN pnpm install
 
 COPY . .
+
+RUN pnpm prisma generate
 
 EXPOSE 3000
 
