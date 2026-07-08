@@ -1,0 +1,15 @@
+services:
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_nico_production
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # En tu PC leerá el .env local con la URL de AWS RDS. 
+      # En AWS real, esta variable se la inyectaremos directo desde la nube.
+      - DATABASE_URL=${DATABASE_URL}
