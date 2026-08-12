@@ -1,9 +1,15 @@
 import { Router } from 'express';
-import { getOrders, createOrder } from '../controllers/orders.controller';
+import { getOrderController, getOrdersController, postOrderController, getOrdersWithDishesController, putOrderController } from '../controllers/orders.controller';
 
 const router = Router();
 
-router.get('/', getOrders);
-router.post('/', createOrder);
+
+router.get('/:id', getOrderController);
+router.get('/', getOrdersController);
+router.get('/with-dishes', getOrdersWithDishesController);
+
+router.post('/', postOrderController);
+
+router.put('/:id', putOrderController);
 
 export default router;

@@ -3,14 +3,73 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
-model Order {
-  id    String   @id @default(uuid())
-  date  DateTime
-  time  String
-  table Int
-  total Float
+model Destination {
+  id     String  @id @default(uuid())
+  name   String  @db.VarChar(100)
+  orders Order[]
+
+  @@map("destinations")
 }
+
+model Order {
+  id         String   @id @default(uuid())
+  salesValue Decimal  @db.Decimal(10, 2)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  destinationId String      @map("destination_id")
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  dishes        OrderDish[]
+
+  @@map("orders")
+}
+
+model OrderDish {
+  orderId      String  @map("order_id")
+  dishId       String  @map("dish_id")
+  dishQuantity Int     @default(1) @map("dish_quantity") @db.SmallInt
+  dishPrice    Decimal @map("dish_price") @db.Decimal(10, 2)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  dish  Dish  @relation(fields: [dishId], references: [id])
+
+  @@id([orderId, dishId])
+  @@map("order_dishes")
+}
+
+model Dish {
+  id    String  @id @default(uuid())
+  name  String  @db.VarChar(150)
+  price Decimal @db.Decimal(10, 2)
+  image String? @db.Text
+
+  orders OrderDish[]
+  items  DishItemOnDish[]
+
+  @@map("dishes")
+}
+
+model DishItem {
+  id   String @id @default(uuid())
+  name String @db.VarChar(100)
+
+  dishes DishItemOnDish[]
+
+  @@map("dish_items")
+}
+
+  model DishItemOnDish {
+    dishId   String @map("dish_id")
+    itemId   String @map("item_id")
+    quantity Int    @default(1) @db.SmallInt
+
+    dish Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
+    item DishItem @relation(fields: [itemId], references: [id])
+
+    @@id([dishId, itemId])
+    @@map("dish_item_on_dishes")
+  }
