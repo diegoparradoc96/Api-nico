@@ -1,25 +1,79 @@
 import prisma from '../db/prisma';
+import { Order } from "@prisma/client"
 
-export type CreateOrderInput = {
-    table: number;
-    total: number;
-    date: Date;
-    time: string;
-};
-
-export const listOrders = () => {
-    return prisma.order.findMany({
-        orderBy: { date: 'desc' },
+export const getOrderService = (id: string) => {
+    return prisma.order.findUnique({
+        where: { id },
+        include: {
+            destination: true,
+            dishes: {
+                include: {
+                    dish: {
+                        include: {
+                            items: {
+                                include: {
+                                    item: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     });
 };
 
-export const saveOrder = (data: CreateOrderInput) => {
-    return prisma.order.create({
-        data: {
-            date: data.date,
-            time: data.time,
-            table: data.table,
-            total: data.total,
+export const getOrdersService = () => {
+    return prisma.order.findMany({
+        orderBy: { createdAt: 'desc' },
+
+        include: {
+            destination: true,
         },
     });
 };
+
+export const getOrdersWithDishesService = () => {
+    return prisma.order.findMany({
+        orderBy: { createdAt: 'desc' },
+
+        include: {
+            destination: true,
+            dishes: {
+                include: {
+                    dish: true
+                }
+            }
+        }
+    });
+};
+
+export const postOrderService = (order: Order) => {
+    return prisma.order.create({
+        data: {
+            salesValue: order.salesValue,
+            createdAt: order.createdAt,
+
+            updatedAt: order.updatedAt,
+
+            destinationId: order.destinationId,
+        },
+    });
+};
+
+export const putOrderService = (id: string, order: Order) => {
+    return prisma.order.update({
+        where: { id },
+        data: {
+            salesValue: order.salesValue,
+            updatedAt: order.updatedAt,
+            destinationId: order.destinationId,
+        },
+    });
+}
+
+export const deleteOrderService = (id: string) => {
+    return prisma.order.delete({
+        where: { id },
+    });
+}
